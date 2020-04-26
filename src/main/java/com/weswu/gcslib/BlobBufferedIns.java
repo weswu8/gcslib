@@ -13,18 +13,18 @@ public class BlobBufferedIns extends InputStream {
     /* the central buffer */
     private byte[] centralBuffer = new byte[]{};
     /* the pointer of the central buffer */
-    int centralBufOffset = 0;
+    private int centralBufOffset = 0;
     /* the available bytes in central buffer */
-    int numOfBtsAalInCentralBuf = 0;
-    long blobSize = -1;
-    long blobOffset = 0;
-    long numOfBlobBtsLeft = 0;
-    int dwLocalBufferSize = 0;
-    String fullBlobPath;
+    private int numOfBtsAalInCentralBuf = 0;
+    private long blobSize = -1;
+    private long blobOffset = 0;
+    private long numOfBlobBtsLeft = 0;
+    private int dwLocalBufferSize = 0;
+    private String fullBlobPath;
     /* count used by readline function */
-    long readOffset = 0;
+    private long readOffset = 0;
 
-    boolean isBlobEOF = false;
+    private boolean isBlobEOF = false;
 
     @SuppressWarnings("static-access")
     public BlobBufferedIns(Config config, GcsReqParmas reqParams) throws GcsException {
@@ -36,10 +36,6 @@ public class BlobBufferedIns extends InputStream {
     }
     public Blob getBlob() {
         return blob;
-    }
-
-    public long getBlobSize() {
-        return blobSize;
     }
 
     @Override
@@ -156,7 +152,7 @@ public class BlobBufferedIns extends InputStream {
         return builder.toString();
     }
     /* reset all the index to zero, specially reset the  read offset as the new value */
-    public synchronized final void resetGlobalVariables(int readOffset){
+    private synchronized final void resetGlobalVariables(int readOffset){
         this.blobOffset = 0;
         this.numOfBlobBtsLeft = 0;
         this.centralBuffer = new byte[]{};
@@ -171,7 +167,7 @@ public class BlobBufferedIns extends InputStream {
      * @return the number of bytes added to the central buffer
      * @throws GcsException
      */
-    public synchronized final int updateCentralBuffer(int bufferOffset, int dwOffset, int len) throws GcsException {
+    private synchronized final int updateCentralBuffer(int bufferOffset, int dwOffset, int len) throws GcsException {
         int numOfBytesDwed = 0;
         byte[] bytesDwedBuf = downloadBlobChunk(dwOffset, len);
         if (null != bytesDwedBuf && bytesDwedBuf.length > 0){
@@ -200,7 +196,7 @@ public class BlobBufferedIns extends InputStream {
     }
 
     /* download a chunk of data from the blob */
-    public synchronized final byte[] downloadBlobChunk (long offset, int len) throws GcsException {
+    private synchronized final byte[] downloadBlobChunk (long offset, int len) throws GcsException {
         long bytesDownloaded = 0;
         ByteBuffer dwLocalBuffer = null;
         if (isBlobEOF){	return null;}
@@ -221,7 +217,7 @@ public class BlobBufferedIns extends InputStream {
 
     }
     /* read the date from the buffer */
-    public synchronized final  byte[] readFromBuffer (int offset, int numOfbytesToRead){
+    private synchronized final  byte[] readFromBuffer (int offset, int numOfbytesToRead){
         byte[] chunkBytesReaded;
         /* update the offset of the buffer */
         centralBufOffset += offset;

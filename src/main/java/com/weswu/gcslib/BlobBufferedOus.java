@@ -16,19 +16,19 @@ public class BlobBufferedOus extends OutputStream {
     /* the central buffer */
     private byte[] centralBuffer;
     /* the pointer of the central buffer */
-    int centralBufOffset= 0;
-    int centralBufferSize = Constants.BLOB_BUFFERED_OUTS_BUFFER_SIZE;
-    long totalDataWBuffered = 0;
-    long totalDataUploaded = 0;
-    long localFileSize = 0;
+    private int centralBufOffset= 0;
+    private int centralBufferSize = Constants.BLOB_BUFFERED_OUTS_BUFFER_SIZE;
+    private long totalDataWBuffered = 0;
+    private long totalDataUploaded = 0;
+    private long localFileSize = 0;
     /* the upload chunk size, the should be smaller than the buffer size */
-    int chunkSizeOfBB = Constants.BLOB_BUFFERED_OUTS_CHUNK_SIZE;
-    int chunkNumber = 0;
+    private int chunkSizeOfBB = Constants.BLOB_BUFFERED_OUTS_CHUNK_SIZE;
+    private int chunkNumber = 0;
     /* the path of the blob */
-    String fullBlobPath;
+    private String fullBlobPath;
     /* the flag represent the state of local stream */
-    boolean isBlobClosed = false;
-    Integer numOfCommitedBlocks = null;
+    private boolean isBlobClosed = false;
+    private Integer numOfCommitedBlocks = null;
 
     public BlobBufferedOus(Config config, GcsReqParmas reqParams) throws GcsException, IOException {
         this.blob = GcsService.getInstance(config).createBlob(reqParams);
@@ -126,7 +126,7 @@ public class BlobBufferedOus extends OutputStream {
 
     }
     /* write data to buffer */
-    public synchronized final int writeToBuffer(byte[] rawData, int offset, int length){
+    private synchronized final int writeToBuffer(byte[] rawData, int offset, int length){
         int numOfDataWrited = 0;
         /* the capacity of central buffer is ok */
         if ((centralBuffer.length - centralBufOffset) > length ){
@@ -144,7 +144,7 @@ public class BlobBufferedOus extends OutputStream {
     }
     /* upload a chunk of data from to blob */
     @SuppressWarnings("static-access")
-    public synchronized final int uploadBlobChunk (byte[] rawData,  int offset, int length) throws GcsException {
+    private synchronized final int uploadBlobChunk (byte[] rawData,  int offset, int length) throws GcsException {
         int dataUploadedThisChunk = 0;
         try {
             ByteArrayInputStream bInput = new ByteArrayInputStream(rawData, offset, length);
@@ -162,13 +162,13 @@ public class BlobBufferedOus extends OutputStream {
         return dataUploadedThisChunk;
     }
 
-    public synchronized boolean isBufferedDataReadyToUpload() {
+    private synchronized boolean isBufferedDataReadyToUpload() {
         boolean result = false;
         if (centralBufOffset > chunkSizeOfBB){ result = true;}
         return result;
     }
 
-    public synchronized void verifyUploadConditions() throws GcsException {
+    private synchronized void verifyUploadConditions() throws GcsException {
         long blobSizeLimit = 0;
         blobSizeLimit = Constants.BLOB_SIZE_LIMIT;
         if (null == numOfCommitedBlocks){numOfCommitedBlocks = 0;}
