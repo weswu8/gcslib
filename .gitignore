@@ -1,0 +1,11 @@
+__pycache__/
+data/
+target/
+*sa.json
+*.class
+*.pyc
+*.log
+*.csv
+*.txt
+*.pkl
+
